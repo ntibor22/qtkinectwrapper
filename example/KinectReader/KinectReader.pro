@@ -78,3 +78,6 @@ win32 {
 # QtKinectWrapper   QtKinectWrapper   QtKinectWrapper   QtKinectWrapper
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+RESOURCES += \
+    resources.qrc
