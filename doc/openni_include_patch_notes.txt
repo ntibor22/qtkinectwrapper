@@ -1,0 +1,21 @@
+In order to use OpenNI with mingw under windows, the platform file must be changed:
+- so that the "linux" variant of include is called
+- yet that the __stdcall calling convention is used.
+
+These following must be changed:
+
+1) Change XnPlatform.h:
+
+
+#if defined(__MINGW32__) // gcc-windows
+   #include "mingw-win32/XnPlatformLinux-x86.h"
+#elif (_WIN32) // Microsoft Visual Studio
+
+2) Copy Include/Linux-x86 to Include/mingw-win32
+
+3) Change XnPlatformLinux-x86.h:
+
+// Changed callback type for gcc-windows (mingw) compiles to include the stdcall decoration:
+#define XN_CALLBACK_TYPE XN_STDCALL
+
+
