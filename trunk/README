@@ -1,0 +1,35 @@
+	QtKinectwrapper - Qt Kinect Wrapper Class 
+	Copyright (C) 2011:
+			Daniel Roggen, droggen@gmail.com			
+			
+	All rights reserved.
+
+
+
+History
+-------
+
+V 1.00 - 05.09.2011: Basic functionality
+
+
+License
+-------
+
+Modified BSD license
+
+
+Dependencies
+------------
+
+- OpenNI, PrimeSense Sensor Kinect, PrimeSense NITE
+- License key for OpenNI (the free provided by PrimeSense for the kinect will do)
+
+Known working combinations for windows 7 32 & 64:
+1. OpenNI-Win32-v1.0.0.25, Sensor-Kinect-Win32-5.0.0, NITE-Win32-v1.3.0.18
+2. OpenNI-Win32-1.3.2.1-Dev, SensorKinect-Win-OpenSource32-5.0.3.3, NITE-Win32-1.4.0.5-Dev
+
+Known issues
+------------
+- The OpenNI API is fast moving... Some functions used here are deprecated (but still work).
+- Lots of pragma warning when compiling with mingw
+- Manual patching of the OpenNI include for compilation with mingw (see documentation)

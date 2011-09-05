@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta content="text/html; charset=ISO-8859-1"
+      http-equiv="Content-Type">
+    <title>How to use QTFFmpegWrapper</title>
+  </head>
+  <body>
+    <h1>How to use QtKinectWrapper</h1>
+    <h2>General instructions</h2>
+    <ol>
+      <li>Create a QT project in the usual way</li>
+      <li>Copy the QtKinectWrapper directory into your project</li>
+      <li>Edit your project .pro file: </li>
+      <ol>
+        <li>add at the end of the .pro file the content of
+          QtKinectWrapper/config.pro,</li>
+        <li>modify the path to the QtKinectWrapper directory, the OpenNI
+          libraries, etc.<br>
+        </li>
+      </ol>
+      <li>Make sure the OpenNI, PrimeSense Sensor, and PrimeSense NITE
+        dynamic link libraries are available in your
+        path - otherwise the program will crash upon start</li>
+    </ol>
+    <h2>Notes for Linux<br>
+    </h2>
+    Not tested so far, but should work with the proper path to the
+    lib/include<br>
+    <h2>Notes for Windows<br>
+    </h2>
+    <h3>
+      Compilation with mingw</h3>
+    The OpenNI includes assume that a gcc compiler means linux. This
+    causes <span style="font-style: italic;">OpenNI/Include/XnPlatform.h</span>
+    to include <span style="font-style: italic;">OpenNI/Include/Linux-x86/XnPlatformLinux-x86.h</span>
+    for the platform definition. This creates problem with the
+    declaration of callbacks. Callbacks under windows should use the
+    __stdcall calling convention. Callbacks under Linux don't.<br>
+    <br>
+    To solve this do the following:<br>
+    <div style="margin-left: 40px;">1. In the QtKinectWrapper directory
+      copy the OpenNI includes from your current installation, so that
+      they are in the .../QtKinectWrapper/OpenNI/Include directory</div>
+    <div style="margin-left: 40px;">2. Modify
+      .../QtKinectWrapper/OpenNI/Include/XnPlatform.h to check for mingw
+      and load a mingw specific platform:</div>
+    <div style="margin-left: 80px;">#if defined(__MINGW32__) //
+      gcc-windows<br>
+      &nbsp;&nbsp; #include "mingw-win32/XnPlatformLinux-x86.h"<br>
+      #elif (_WIN32) // Microsoft Visual Studio<br>
+    </div>
+    <div style="margin-left: 40px;">3. Copy and rename the
+      .../QtKinectWrapper/OpenNI/Include/Linux-x86 directory to
+      .../QtKinectWrapper/OpenNI/Include/mingw-win32<br>
+      4. Modify
+      .../QtKinectWrapper/OpenNI/Include/mingw-win32/XnPlatformLinux-x86.h
+      to use the stdcall calling convention for the callbacks:<br>
+    </div>
+    <div style="margin-left: 80px;">// Changed callback type for
+      gcc-windows (mingw) compiles to include the stdcall decoration:<br>
+      #define XN_CALLBACK_TYPE XN_STDCALL<br>
+    </div>
+    <h2>Example
+    </h2>
+    <ul>
+      <li>example/KinectReader: Demonstrates the basic functionality</li>
+      <ul>
+        <li>Getting camera image</li>
+        <li>Getting depth map</li>
+        <li>Getting number of user tracked and skeleton/body coordinates</li>
+      </ul>
+    </ul>
+    <br>
+    <br>
+  </body>
+</html>
