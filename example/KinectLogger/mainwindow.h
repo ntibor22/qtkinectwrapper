@@ -16,9 +16,15 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDialog>
 #include <QLabel>
+#include <QFile>
+#include <QTextStream>
 
 #include "QKinectWrapper.h"
+#include "QStreamSrv.h"
+#include "writer.h"
+#include "keyfilter.h"
 
 
 #include <XnFPSCalculator.h>
@@ -32,10 +38,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-   explicit MainWindow(QWidget *parent = 0);
+   explicit MainWindow(QString progname,QString fname,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
    ~MainWindow();
 
 public slots:
+   void init();
    void kinectData();
    void kinectStatus(QKinect::KinectStatus);
    void kinectUser(unsigned,bool);
@@ -43,8 +50,11 @@ public slots:
    void kinectCalibration(unsigned,QKinect::CalibrationStatus);
 
 
+protected:
+
 private slots:
-   void on_pushButton_KinectStartStop_clicked();
+   void key(int k);
+   void help();
 
 private:
    Ui::MainWindow *ui;
@@ -54,7 +64,21 @@ private:
    QLabel *sbKinectTime;
    QLabel *sbKinectFPS;
    QLabel *sbKinectNumBody;
+   QLabel *sbLabel;
+   QLabel *sbFile;
+   QLabel *sbServer;
+   QLabel *sbClients;
+   QLabel *sbSystime;
+   QLabel *sbRuntime;
    XnFPSData xnFPS;
+   KWriter writer;
+   QString progname,fname;
+   unsigned numuser;
+   quint16 port;
+   double timeFirstData;
+   bool firstData;
+   KeyPressEater ke;
+
 
 protected:
 };

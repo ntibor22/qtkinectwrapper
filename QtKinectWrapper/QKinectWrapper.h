@@ -114,7 +114,7 @@ namespace QKinect
       // Center of mass and its projection.
       XnPoint3D com, proj_com;
       // Whether the body tracked
-      bool tracked;
+      //bool tracked;
       // 3D coordinates of the joints
       XnSkeletonJointPosition joints[15];
       // Projected coordinates of the joints
