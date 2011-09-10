@@ -93,12 +93,9 @@ void QKinectWrapper::start()
 **/
 void QKinectWrapper::stop()
 {
-   printf("Stop\n");
    t_requeststop=true;
 
-   printf("Calling wait\n");
    wait();
-   printf("after wait\n");
 }
 
 
@@ -290,6 +287,7 @@ void QKinectWrapper::run()
    emit statusNotification(status);
    mutex.unlock();
 
+   frameid=0;
    while(!t_requeststop)
    {
       //double t1,t2;
@@ -302,7 +300,8 @@ void QKinectWrapper::run()
       mutex.lock();
       xn::DepthMetaData depthMD;
       g_DepthGenerator.GetMetaData(depthMD);
-      frameid = depthMD.FrameID();
+      //frameid = depthMD.FrameID();
+      frameid++;
       timestamp = (double)depthMD.Timestamp()/1000000.0;
       // Must create the bodies first
       bodies = createBodies();
@@ -561,7 +560,7 @@ Bodies QKinectWrapper::createBodies()
       {
          // If the user is tracked, get the skeleton
          b.status=QKinect::Tracking;
-         b.tracked=true;
+         //b.tracked=true;
          g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[i], XN_SKEL_HEAD, b.joints[QKinect::Head]);
          g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[i], XN_SKEL_NECK, b.joints[QKinect::Neck]);
          g_UserGenerator.GetSkeletonCap().GetSkeletonJointPosition(aUsers[i], XN_SKEL_LEFT_SHOULDER, b.joints[QKinect::LeftShoulder]);
@@ -584,7 +583,7 @@ Bodies QKinectWrapper::createBodies()
       }
       else
       {
-         b.tracked=false;
+         //b.tracked=false;
          if (g_UserGenerator.GetSkeletonCap().IsCalibrating(aUsers[i]))
             b.status=QKinect::Calibrating;
          else
