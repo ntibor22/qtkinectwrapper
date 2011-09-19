@@ -135,7 +135,12 @@ void KWriter::dataNotification()
          ss << bodies[i].status << " ";
 
          ss << (int)bodies[i].com.X << " " << (int)bodies[i].com.Y << " " << (int)bodies[i].com.Z << " ";
-         ss << (int)bodies[i].proj_com.X << " " << (int)bodies[i].proj_com.Y << " " << (int)bodies[i].proj_com.Z << " ";
+         if(bodies[i].proj_com_valid)
+            //ss << (int)bodies[i].proj_com.X << " " << (int)bodies[i].proj_com.Y << " " << (int)bodies[i].proj_com.Z << " ";
+            ss << (int)bodies[i].proj_com.X << " " << (int)bodies[i].proj_com.Y << " ";
+         else
+            //ss << "NaN NaN NaN ";
+            ss << "NaN NaN ";
 
          if(bodies[i].status==QKinect::Tracking)
          {
@@ -144,9 +149,11 @@ void KWriter::dataNotification()
                ss << "\t";
                ss << (int)bodies[i].joints[j].position.X << " " << (int)bodies[i].joints[j].position.Y << " " << (int)bodies[i].joints[j].position.Z << " "  << (int)(bodies[i].joints[j].fConfidence*1000) << "   ";
                if(bodies[i].proj_joints_valid[j])
-                  ss << (int)bodies[i].proj_joints[j].X << " " << (int)bodies[i].proj_joints[j].Y << " " << (int)bodies[i].proj_joints[j].Z << " ";
+                  //ss << (int)bodies[i].proj_joints[j].X << " " << (int)bodies[i].proj_joints[j].Y << " " << (int)bodies[i].proj_joints[j].Z << " ";
+                  ss << (int)bodies[i].proj_joints[j].X << " " << (int)bodies[i].proj_joints[j].Y << " " ;
                else
-                  ss << "NaN NaN NaN ";
+                  //ss << "NaN NaN NaN ";
+                  ss << "NaN NaN ";
             }
          }
          else
@@ -154,14 +161,16 @@ void KWriter::dataNotification()
             for(unsigned j=0;j<15;j++)
             {
                ss << "\t";
-               for(unsigned k=0;k<7;k++)
+               //for(unsigned k=0;k<7;k++)
+               for(unsigned k=0;k<6;k++)
                   ss << "NaN ";
             }
          }
       }
       else
       {
-         for(unsigned k=0;k<8+15*7;k++)
+         //for(unsigned k=0;k<8+15*7;k++)
+         for(unsigned k=0;k<7+15*6;k++)
             ss << "NaN ";
       }
 

@@ -113,6 +113,8 @@ namespace QKinect
       BodyStatus status;
       // Center of mass and its projection.
       XnPoint3D com, proj_com;
+      // Whether the com projection is valid
+      bool proj_com_valid;
       // Whether the body tracked
       //bool tracked;
       // 3D coordinates of the joints
@@ -170,6 +172,9 @@ namespace QKinect
       xn::DepthGenerator g_DepthGenerator;
       xn::UserGenerator g_UserGenerator;
       xn::ImageGenerator g_ImageGenerator;
+      //xn::HandsGenerator g_HandsGenerator;
+      //xn::HandsGenerator g_GestureGenerator;
+
       XnChar g_strPose[20];
 
 
@@ -205,6 +210,10 @@ namespace QKinect
       static void XN_CALLBACK_TYPE UserPose_PoseDetected(xn::PoseDetectionCapability& capability, const XnChar* strPose, XnUserID nId, void* pCookie);
       static void XN_CALLBACK_TYPE UserCalibration_CalibrationStart(xn::SkeletonCapability& capability, XnUserID nId, void* pCookie);
       static void XN_CALLBACK_TYPE UserCalibration_CalibrationComplete(xn::SkeletonCapability& capability, XnUserID nId, XnCalibrationStatus calibrationError, void* pCookie);
+
+      //static void XN_CALLBACK_TYPE Hand_Create(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D *pPosition, XnFloat time,void* pCookie);
+      //static void XN_CALLBACK_TYPE Hand_Destroy(xn::HandsGenerator& generator, XnUserID nId, XnFloat time,void* pCookie);
+      //static void XN_CALLBACK_TYPE Hand_Update(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D *pPosition, XnFloat time,void* pCookie);
 
    private slots:
 
