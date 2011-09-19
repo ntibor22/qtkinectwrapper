@@ -6,7 +6,7 @@
 
 QT       += core gui network
 
-#CONFIG += console
+CONFIG += console
 
 TARGET = KinectLogger
 TEMPLATE = app
@@ -32,6 +32,8 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     helpdialog.ui
 
+# icon
+win32: RC_FILE = kinectlogger.rc
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -96,4 +98,5 @@ RESOURCES += \
     resources.qrc
 
 OTHER_FILES += \
-    help.html
+    help.html \
+    kinectlogger.rc

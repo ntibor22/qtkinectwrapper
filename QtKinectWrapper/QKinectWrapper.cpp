@@ -15,6 +15,8 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 
 
 #include "QKinectWrapper.h"
+#include <math.h>
+//#include <cmath>
 
 namespace QKinect
 {
@@ -333,6 +335,7 @@ bool QKinectWrapper::initialize()
    XnCallbackHandle hUserCallbacks;
    //XnCallbackHandle hCalibrationCallbacks, hPoseCallbacks;
    XnCallbackHandle hCalibrationStart, hCalibrationComplete,hPoseDetected;
+   XnCallbackHandle hHandCreate, hHandUpdate, hHandDestroy, hHand;
 
    // Initialize the context
    nRetVal = g_Context.Init();
@@ -434,6 +437,56 @@ bool QKinectWrapper::initialize()
 
    g_UserGenerator.GetSkeletonCap().SetSkeletonProfile(XN_SKEL_PROFILE_ALL);
 
+
+   /*
+   // Creates a hand generator
+   printf("Before hand create\n");
+   nRetVal = g_HandsGenerator.Create(g_Context);
+   printf("After hand create\n");
+   if(nRetVal!=XN_STATUS_OK)
+   {
+      mutex.lock();
+      errorMsg = QString("Hands generator creation failed: %1").arg(xnGetStatusString(nRetVal));
+      mutex.unlock();
+      return false;
+   }
+
+   nRetVal = g_HandsGenerator.RegisterHandCallbacks(Hand_Create, Hand_Update, Hand_Destroy, this,hHand);
+   if(nRetVal!=XN_STATUS_OK)
+   {
+      mutex.lock();
+      errorMsg = QString("Hands generator can't register callbacks: %1").arg(xnGetStatusString(nRetVal));
+      mutex.unlock();
+      return false;
+   }
+
+
+   printf("Before gesture create\n");
+   nRetVal = g_GestureGenerator.Create(g_Context);
+   printf("After gesture create\n");
+   if(nRetVal!=XN_STATUS_OK)
+   {
+      mutex.lock();
+      errorMsg = QString("Gesture generator creation failed: %1").arg(xnGetStatusString(nRetVal));
+      mutex.unlock();
+      return false;
+   }
+
+
+
+
+
+   nRetVal = g_GestureGenerator.RegisterHandCallbacks(Hand_Create, Hand_Update, Hand_Destroy, this,hHand);
+   if(nRetVal!=XN_STATUS_OK)
+   {
+      mutex.lock();
+      errorMsg = QString("Hands generator can't register callbacks: %1").arg(xnGetStatusString(nRetVal));
+      mutex.unlock();
+      return false;
+   }
+*/
+
+
    // Start producting data
    nRetVal = g_Context.StartGeneratingAll();
 
@@ -517,6 +570,34 @@ void XN_CALLBACK_TYPE QKinectWrapper::UserCalibration_CalibrationComplete(xn::Sk
    emit pthis->calibrationNotification(nId,CalibrationEndFail);
 }
 
+/**
+  \brief
+**/
+/*void XN_CALLBACK_TYPE QKinectWrapper::Hand_Create(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D *pPosition, XnFloat time,void* pCookie)
+{
+   QKinectWrapper *pthis = (QKinectWrapper*)pCookie;
+
+   printf("Hand create. id %d. position: %f %f %f. time: %f\n",nId,pPosition->X,pPosition->Y,pPosition->Z,time);
+}*/
+
+/**
+  \brief
+**/
+/*void XN_CALLBACK_TYPE QKinectWrapper::Hand_Destroy(xn::HandsGenerator& generator, XnUserID nId, XnFloat time,void* pCookie)
+{
+   QKinectWrapper *pthis = (QKinectWrapper*)pCookie;
+
+   printf("Hand create. id %d. time: %f\n",nId,time);
+}*/
+
+/**
+  \brief
+**/
+/*void XN_CALLBACK_TYPE QKinectWrapper::Hand_Update(xn::HandsGenerator& generator, XnUserID nId, const XnPoint3D *pPosition, XnFloat time,void* pCookie)
+{
+   QKinectWrapper *pthis = (QKinectWrapper*)pCookie;
+   printf("Hand update. id %d. position: %f %f %f. time: %f\n",nId,pPosition->X,pPosition->Y,pPosition->Z,time);
+}*/
 
 /**
   \brief Converts joint to the projective, marks if the projection is valid (joint confidence is high enough)
@@ -555,6 +636,10 @@ Bodies QKinectWrapper::createBodies()
       // Get the center of mass and its projection
       g_UserGenerator.GetCoM(aUsers[i], b.com);
       g_DepthGenerator.ConvertRealWorldToProjective(1, &b.com, &b.proj_com);
+      if(isnan(b.proj_com.X) || isnan(b.proj_com.Y) || isnan(b.proj_com.Z))
+         b.proj_com_valid=false;
+      else
+         b.proj_com_valid=true;
 
       if(g_UserGenerator.GetSkeletonCap().IsTracking(aUsers[i]))
       {
