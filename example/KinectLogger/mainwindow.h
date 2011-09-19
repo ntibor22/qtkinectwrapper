@@ -55,6 +55,7 @@ protected:
 private slots:
    void key(int k);
    void help();
+   void about();
 
 private:
    Ui::MainWindow *ui;

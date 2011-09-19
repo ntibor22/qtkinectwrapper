@@ -70,7 +70,9 @@ MainWindow::MainWindow(QString progname,QString fname,unsigned numuser,quint16 p
    ui->statusBar->addWidget(sbLabel);
 
    // Menu
+   menuBar()->addAction("&About",this,SLOT(about()));
    menuBar()->addAction("&Help",this,SLOT(help()));
+
 
 
 
@@ -248,6 +250,7 @@ void MainWindow::key(int k)
 
 void MainWindow::help()
 {
+   ui->labelDepth->releaseKeyboard();
    // Load the text from the resource
    QFile file(":/help.html");
    file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -256,4 +259,19 @@ void MainWindow::help()
    HelpDialog *dlg = new HelpDialog(QString(filedata),this);
    dlg->exec();
    delete dlg;
+
+   ui->labelDepth->grabKeyboard();
 }
+
+void MainWindow::about()
+{
+   ui->labelDepth->releaseKeyboard();
+   QMessageBox::about(this, "About",
+   "<p><b>KinectLogger</b></p>\n"
+   "<p>Version 19.09.2011</p>"
+   "<p>(c) 2011 Daniel Roggen</p>");
+   ui->labelDepth->grabKeyboard();
+}
+
+
+

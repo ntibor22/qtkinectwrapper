@@ -9,7 +9,12 @@
 History
 -------
 
-V 1.00 - 05.09.2011: Basic functionality
+19.09.2011:
+	KinectLogger:
+		Removed meaningless Z values for screen projections from logging/streaming
+		Added application icon
+
+05.09.2011: Basic functionality
 
 
 License
