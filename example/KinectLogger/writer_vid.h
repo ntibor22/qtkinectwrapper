@@ -12,82 +12,47 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE FREEBSD PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef __WRITER_VID_H
+#define __WRITER_VID_H
 
-#include <QMainWindow>
-#include <QDialog>
-#include <QLabel>
+#ifdef WRITEVIDEO
+
 #include <QFile>
 #include <QTextStream>
-
 #include "QKinectWrapper.h"
 #include "QStreamSrv.h"
-#include "writer.h"
-#include "writer_vid.h"
 #include "keyfilter.h"
+#include "QVideoEncoder.h"
 
-
-#include <XnFPSCalculator.h>
-
-namespace Ui {
-    class MainWindow;
-}
-
-class MainWindow : public QMainWindow
+class KWriterVideo : public QObject
 {
-    Q_OBJECT
-
+   Q_OBJECT
 public:
-   explicit MainWindow(QString progname,QString fname,QString fnamevideo,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
-   ~MainWindow();
+   KWriterVideo();
+   virtual ~KWriterVideo();
 
-public slots:
-   void init();
-   void kinectData();
-   void kinectStatus(QKinect::KinectStatus);
-   void kinectUser(unsigned,bool);
-   void kinectPose(unsigned,QString);
-   void kinectCalibration(unsigned,QKinect::CalibrationStatus);
+   int start(QString fname,QKinect::QKinectWrapper *k);
+   void stop();
+   int getVideoSize();
 
-
-protected:
-
-private slots:
-   void key(int k);
-   void help();
-   void about();
 
 private:
-   Ui::MainWindow *ui;
-   QKinect::QKinectWrapper kreader;
-   QLabel *sbKinectStatus;
-   QLabel *sbKinectFrame;
-   QLabel *sbKinectTime;
-   QLabel *sbKinectFPS;
-   QLabel *sbKinectNumBody;
-   QLabel *sbLabel;
-   QLabel *sbFile;
-   QLabel *sbServer;
-   QLabel *sbClients;
-   QLabel *sbSystime;
-   QLabel *sbRuntime;
-   XnFPSData xnFPS;
-   KWriter writer;
-#ifdef WRITEVIDEO
-   QLabel *sbFileVideo;
-   QLabel *sbFileVideoSize;
-   KWriterVideo writervideo;
-#endif
-   QString progname,fname,fnamevideo;
-   unsigned numuser;
-   quint16 port;
-   double timeFirstData;
-   bool firstData;
-   KeyPressEater ke;
+   QKinect::QKinectWrapper *kinect;
+   QString fname;
+   QThread thread;
+   QVideoEncoder encoder;
+   QImage frame;
+   QPainter painter;
+   QFont font;
+   int fontheight;
+   int encodesize;      // Number of bytes encoded
 
-
-protected:
+private slots:
+      void dataNotification();
 };
 
-#endif // MAINWINDOW_H
+
+
+#endif
+
+#endif // __WRITER_VID_H
