@@ -1,12 +1,16 @@
 <html>
 
 <h4>Command line parameters</h4>
-<pre>   parameters: [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [&lt;file&gt;]</pre>
+<pre>
+   parameters: [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]
+               [-b &lt;bitrate&gt;] [&lt;file&gt;] [&lt;file&gt;]</pre>
 <ul>
 <li> ?|h: display this help
 <li> &lt;numuser&gt;: maximum number of users to store/serve. "NaN" are used for padding if less users are effectively available.
 <li> &lt;port&gt;     starts a streaming server on &lt;port&gt;
 <li> &lt;file&gt;     store data in &lt;file&gt;
+<li> &lt;video&gt;    store video in &lt;video&gt;
+<li> &lt;bitrate&gt;  video &lt;bitrate&gt;
 </ul>
 
 If neither a port nor a file is specified, the program displays the Kinect data without logging.

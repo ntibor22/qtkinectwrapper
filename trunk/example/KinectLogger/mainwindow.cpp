@@ -311,7 +311,7 @@ void MainWindow::about()
    ui->labelDepth->releaseKeyboard();
    QMessageBox::about(this, "About",
    "<p><b>KinectLogger</b></p>\n"
-   "<p>Version 19.09.2011</p>"
+   "<p>Version 21.09.2011</p>"
    "<p>(c) 2011 Daniel Roggen</p>");
    ui->labelDepth->grabKeyboard();
 }
