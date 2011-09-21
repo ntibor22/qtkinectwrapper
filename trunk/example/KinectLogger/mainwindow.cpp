@@ -28,15 +28,17 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 /**
    \brief Mainwindow UI initialization. Reader/writer initialization in init slot.
 **/
-MainWindow::MainWindow(QString progname,QString fname,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
+MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
    QMainWindow(parent,f),
    ui(new Ui::MainWindow)
 {
    // Keep the params
    MainWindow::progname=progname;
    MainWindow::fname=fname;
+   MainWindow::fnamevideo=fnamevideo;
    MainWindow::numuser=numuser;
    MainWindow::port=port;
+
 
    // Not yet received data
    firstData=true;
@@ -56,13 +58,20 @@ MainWindow::MainWindow(QString progname,QString fname,unsigned numuser,quint16 p
    sbSystime = new QLabel(statusBar());
    sbRuntime = new QLabel(statusBar());
    sbLabel = new QLabel(statusBar());
-
+#ifdef WRITEVIDEO
+   sbFileVideo = new QLabel(statusBar());
+   sbFileVideoSize = new QLabel(statusBar());
+#endif
    ui->statusBar->addWidget(sbKinectStatus);
    ui->statusBar->addWidget(sbKinectFrame);
    ui->statusBar->addWidget(sbKinectTime);
    ui->statusBar->addWidget(sbKinectFPS);
    ui->statusBar->addWidget(sbKinectNumBody);
    ui->statusBar->addWidget(sbFile);
+#ifdef WRITEVIDEO
+   ui->statusBar->addWidget(sbFileVideo);
+   ui->statusBar->addWidget(sbFileVideoSize);
+#endif
    ui->statusBar->addWidget(sbServer);
    ui->statusBar->addWidget(sbClients);
    ui->statusBar->addWidget(sbSystime);
@@ -91,6 +100,9 @@ MainWindow::~MainWindow()
 
    kreader.stop();
    writer.stop();
+#ifdef WRITEVIDEO
+   writervideo.stop();
+#endif
    delete ui;
 }
 
@@ -136,6 +148,29 @@ void MainWindow::init()
       return;
    }
 
+#ifdef WRITEVIDEO
+   if(!fnamevideo.isEmpty())
+   {
+      rv = writervideo.start(fnamevideo,&kreader);
+      if(rv!=0)
+      {
+         QString err;
+         err=QString("Cannot write video to file '%1'").arg(fnamevideo);
+         QMessageBox::critical(this,progname,err);
+         // Close app
+         close();
+         return;
+      }
+      sbFileVideo->setText(QString("Vid: %1").arg(fnamevideo));
+   }
+   else
+   {
+      sbFileVideo->setText("No video");
+      sbFileVideoSize->setText("VS: -");
+   }
+
+#endif
+
 
 
 
@@ -179,7 +214,6 @@ void MainWindow::kinectData()
    painter.drawImage(QRect(QPoint(0,0),ui->labelDepth->size()),img,QRect(QPoint(0,0),img.size()));
    painter.end();
    ui->labelDepth->setPixmap(QPixmap::fromImage(target));
-   //ui->labelDepth->setPixmap(QPixmap::fromImage(img));
 
    img = kreader.getCamera();
    target = QImage(ui->labelImage->size(),QImage::Format_RGB32);
@@ -187,7 +221,6 @@ void MainWindow::kinectData()
    painter.drawImage(QRect(QPoint(0,0),ui->labelImage->size()),img,QRect(QPoint(0,0),img.size()));
    painter.end();
    ui->labelImage->setPixmap(QPixmap::fromImage(target));
-   //ui->labelImage->setPixmap(QPixmap::fromImage(img));
 
    QKinect::Bodies bodies = kreader.getBodies();
    sbKinectNumBody->setText(QString("Body: %1").arg(bodies.size()));
@@ -204,6 +237,13 @@ void MainWindow::kinectData()
       sbClients->setText(QString("Clients: -"));
    else
       sbClients->setText(QString("Clients: %1").arg(writer.getNumClients()));
+
+#ifdef WRITEVIDEO
+   if(!fnamevideo.isNull())
+      sbFileVideoSize->setText(QString("VS: %1 MB").arg(writervideo.getVideoSize()/1024/1024));
+#endif
+
+
 }
 
 
