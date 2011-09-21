@@ -9,7 +9,7 @@ DEFINES += WRITEVIDEO
 
 QT       += core gui network
 
-CONFIG += console
+#CONFIG += console
 
 TARGET = KinectLogger
 TEMPLATE = app

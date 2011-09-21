@@ -9,6 +9,7 @@ copy C:\QtSDK\Desktop\Qt\4.8.0\mingw\bin\QtNetwork4.dll bin
 copy "C:\Program Files (x86)\OpenNI\Bin\openni.dll" bin
 copy example\KinectReader-build-desktop\release\KinectReader.exe bin
 copy example\KinectLogger-build-desktop\release\KinectLogger.exe bin
+copy ..\qtffmpegwrapper_trunk\ffmpeg_lib_win32\*.dll bin
 
 cd bin
 del ..\..\qtkinectwrapper_win.zip

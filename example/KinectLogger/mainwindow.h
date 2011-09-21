@@ -39,7 +39,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-   explicit MainWindow(QString progname,QString fname,QString fnamevideo,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
+   explicit MainWindow(QString progname,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
    ~MainWindow();
 
 public slots:
@@ -74,18 +74,20 @@ private:
    QLabel *sbRuntime;
    XnFPSData xnFPS;
    KWriter writer;
-#ifdef WRITEVIDEO
-   QLabel *sbFileVideo;
-   QLabel *sbFileVideoSize;
-   KWriterVideo writervideo;
-#endif
-   QString progname,fname,fnamevideo;
+   QString progname,fname;
    unsigned numuser;
    quint16 port;
    double timeFirstData;
    bool firstData;
    KeyPressEater ke;
 
+#ifdef WRITEVIDEO
+   QLabel *sbFileVideo;
+   QLabel *sbFileVideoSize;
+   KWriterVideo writervideo;
+   unsigned bitrate;
+   QString fnamevideo;
+#endif
 
 protected:
 };

@@ -31,7 +31,7 @@ public:
    KWriterVideo();
    virtual ~KWriterVideo();
 
-   int start(QString fname,QKinect::QKinectWrapper *k);
+   int start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *k);
    void stop();
    int getVideoSize();
 

@@ -58,16 +58,16 @@ void KWriterVideo::stop()
    0:    OK
    1:    File creation error
 **/
-int KWriterVideo::start(QString fname,QKinect::QKinectWrapper *k)
+int KWriterVideo::start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *k)
 {
    KWriterVideo::fname=fname;
    kinect=k;
 
-   int bitrate=5000000;
-   int gop = 20;
+   unsigned gop = 20;         // Number of frames between key frames
+   unsigned fps = 30;         // Frame per second. Kinect is at 30.
 
    // Create the encoder
-   if(!encoder.createFile(fname,frame.width(),frame.height(),bitrate,gop))
+   if(!encoder.createFile(fname,frame.width(),frame.height(),bitrate,gop,fps))
    {
       return 1;
    }
@@ -103,9 +103,8 @@ int KWriterVideo::getVideoSize()
 **/
 void KWriterVideo::dataNotification()
 {
-   double t1,t2,t3;
-
-   t1 = PreciseTimer::QueryTimer();
+   //double t1,t2,t3;
+   //t1 = PreciseTimer::QueryTimer();
 
 
    // The image on which we draw the frames
@@ -123,13 +122,13 @@ void KWriterVideo::dataNotification()
    painter.drawText(0,fontheight,info);
 
 
-   t2 = PreciseTimer::QueryTimer();
+   //t2 = PreciseTimer::QueryTimer();
    int size=encoder.encodeImage(frame);
-   t3 = PreciseTimer::QueryTimer();
+   //t3 = PreciseTimer::QueryTimer();
 
    encodesize+=size;
 
-   printf("Encoded: %d. Setup: %.5f. Encode: %.5f\n",size,t2-t1,t3-t2);
+   //printf("Encoded: %d. Setup: %.5f. Encode: %.5f\n",size,t2-t1,t3-t2);
 
 
 

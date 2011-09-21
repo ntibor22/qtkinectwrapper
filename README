@@ -9,6 +9,10 @@
 History
 -------
 
+21.09.2011:
+  KinectLogger:
+    Added option to create a video containing the depth map and camera image. Relies on QtFFmpegWrapper (http://code.google.com/p/qtffmpegwrapper/)
+
 19.09.2011:
 	KinectLogger:
 		Removed meaningless Z values for screen projections from logging/streaming
