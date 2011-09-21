@@ -28,17 +28,19 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 /**
    \brief Mainwindow UI initialization. Reader/writer initialization in init slot.
 **/
-MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
+MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
    QMainWindow(parent,f),
    ui(new Ui::MainWindow)
 {
    // Keep the params
    MainWindow::progname=progname;
    MainWindow::fname=fname;
-   MainWindow::fnamevideo=fnamevideo;
    MainWindow::numuser=numuser;
    MainWindow::port=port;
-
+#ifdef WRITEVIDEO
+   MainWindow::fnamevideo=fnamevideo;
+   MainWindow::bitrate=bitrate;
+#endif
 
    // Not yet received data
    firstData=true;
@@ -62,6 +64,7 @@ MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigne
    sbFileVideo = new QLabel(statusBar());
    sbFileVideoSize = new QLabel(statusBar());
 #endif
+
    ui->statusBar->addWidget(sbKinectStatus);
    ui->statusBar->addWidget(sbKinectFrame);
    ui->statusBar->addWidget(sbKinectTime);
@@ -151,7 +154,7 @@ void MainWindow::init()
 #ifdef WRITEVIDEO
    if(!fnamevideo.isEmpty())
    {
-      rv = writervideo.start(fnamevideo,&kreader);
+      rv = writervideo.start(fnamevideo,bitrate,&kreader);
       if(rv!=0)
       {
          QString err;

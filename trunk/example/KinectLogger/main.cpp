@@ -20,6 +20,11 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 
 #include "cmdline/cmdline.h"
 
+
+#define BITRATEMIN       100000
+#define BITRATEMAX     20000000
+#define BITRATEDEFAULT  2000000
+
 void Syntax(QString progname,QString errmsg="");
 
 void Syntax(QString progname,QString errmsg)
@@ -32,19 +37,20 @@ void Syntax(QString progname,QString errmsg)
 "\n\n"
 "Usage:\n\n"
 #ifdef WRITEVIDEO
-"      %2  [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [-v &lt;video&gt;] [&lt;file&gt;]\n\n"
+"      %2  [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [-v &lt;video&gt;] [-b &lt;bitrate&gt;] [&lt;file&gt;]\n\n"
 #else
 "      %2  [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [&lt;file&gt;]\n\n"
 #endif
 "   ?|h        display this help\n"
-"   &lt;numuser&gt;  maximum number of users to store/serve (\"NaN\" are used for padding if less users are effectively available)\n"
+"   &lt;numuser&gt;  maximum number of users to store/serve (\"NaN\" are used for padding when less users than &lt;numuser&gt; are seen)\n"
 "   &lt;port&gt;     starts a streaming server on &lt;port&gt;\n"
 "   &lt;file&gt;     store data in &lt;file&gt;\n"
 #ifdef WRITEVIDEO
-"   &lt;video&gt;     store video in &lt;video&gt;\n"
+"   &lt;video&gt;    store video in &lt;video&gt;\n"
+"   &lt;bitrate&gt;  video &lt;bitrate&gt; ranging from %3 to %4 (default %5)\n"
 #endif
 "\n"
-"If neither a port nor a file is specified, the program displays the Kinect data without logging.</pre></html>\n").arg(errmsg).arg(progname);
+"If neither a port nor a file is specified, the program displays the Kinect data without logging.</pre></html>\n").arg(errmsg).arg(progname).arg(BITRATEMIN).arg(BITRATEMAX).arg(BITRATEDEFAULT);
 
    QMessageBox::information(0,progname,str);
 
@@ -52,10 +58,11 @@ void Syntax(QString progname,QString errmsg)
 
 int main(int argc, char *argv[])
 {
-   unsigned numtrack;
+   unsigned numtrack,bitrate;
    unsigned help1,help2;
-   char s_num[256],s_file[256],s_port[256],s_filevid[256];
+   char s_num[256],s_file[256],s_port[256],s_filevid[256],s_bitrate[256];
    int num,port;
+
 
    QFileInfo info(argv[0]);
    QString progname = info.baseName();
@@ -66,7 +73,7 @@ int main(int argc, char *argv[])
 
    // Scan command line
 #ifdef WRITEVIDEO
-   int rv = ScanCommandLine("-n@ -s@ @ -h -? -v@",argc,argv,s_num,s_port,s_file,&help1,&help2,s_filevid);
+   int rv = ScanCommandLine("-n@ -s@ @ -h -? -v@ -b@",argc,argv,s_num,s_port,s_file,&help1,&help2,s_filevid,s_bitrate);
 #else
    int rv = ScanCommandLine("-n@ -s@ @ -h -?",argc,argv,s_num,s_port,s_file,&help1,&help2);
 #endif
@@ -107,8 +114,22 @@ int main(int argc, char *argv[])
    else
       port=0;
 
+   // Check optional bitrate
+   if(strlen(s_bitrate))
+   {
+      // Convert
+      rv = sscanf(s_bitrate,"%u",&bitrate);
+      if(rv!=1 || bitrate<BITRATEMIN || bitrate>BITRATEMAX)
+      {
+         Syntax(progname,"Invalid bitrate");
+         return 0;
+      }
+   }
+   else
+      num=1;
 
-   MainWindow w(progname,QString(s_file),QString(s_filevid),num,port);
+
+   MainWindow w(progname,QString(s_file),QString(s_filevid),bitrate,num,port);
    w.show();
    rv = a.exec();
 
