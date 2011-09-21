@@ -1,2 +1,2 @@
-del ..\qtkinectwrapper_trunk.zip
-zip -r ..\qtkinectwrapper_trunk.zip . 
+del ..\qtkinectwrapper_src.zip
+zip -r ..\qtkinectwrapper_src.zip . 
