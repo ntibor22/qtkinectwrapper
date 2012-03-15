@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>KinectReader</string>
+   <string>KinectLogger</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
