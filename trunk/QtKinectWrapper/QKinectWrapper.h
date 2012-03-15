@@ -149,8 +149,14 @@ namespace QKinect
       void setSkeletonPen(const QPen & pen);
       void setTextPen(const QPen & pen);
       void setFont(const QFont &font);
+      void setDisplayInfoDepth(bool draw);
+      void setDisplayInfoImage(bool draw);
+      void setDisplaySkeletonDepth(bool draw);
+      void setDisplaySkeletonImage(bool draw);
       unsigned getFrameID();
       double getTimestamp();
+      void getCameraDepthBodies(QImage &camera,QImage &depth,Bodies &bodies,double &ts,unsigned &fid);
+      void getCameraDepth(QImage &camera,QImage &depth,double &ts,unsigned &fid);
       QImage getDepth();
       QImage getCamera();
       Bodies getBodies();
@@ -186,10 +192,6 @@ namespace QKinect
       bool displayInfoImage;
       bool displaySkeletonDepth;
       bool displaySkeletonImage;
-      void setDisplayInfoDepth(bool draw);
-      void setDisplayInfoImage(bool draw);
-      void setDisplaySkeletonDepth(bool draw);
-      void setDisplaySkeletonImage(bool draw);
       XnBool g_bNeedPose;
 
 

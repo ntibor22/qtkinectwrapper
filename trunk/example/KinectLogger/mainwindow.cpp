@@ -23,15 +23,16 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #include <stdio.h>
 #include "helpdialog.h"
 #include "precisetimer.h"
-
+#include "cio.h"
 
 /**
    \brief Mainwindow UI initialization. Reader/writer initialization in init slot.
 **/
-MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
+MainWindow::MainWindow(QString progname,bool plainimage,bool plaindepth,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
    QMainWindow(parent,f),
    ui(new Ui::MainWindow)
 {
+   //ConsoleInit();
    // Keep the params
    MainWindow::progname=progname;
    MainWindow::fname=fname;
@@ -41,6 +42,18 @@ MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigne
    MainWindow::fnamevideo=fnamevideo;
    MainWindow::bitrate=bitrate;
 #endif
+
+   // Set the overlay on the camera
+   if(plainimage)
+   {
+      kreader.setDisplaySkeletonImage(false);
+      kreader.setDisplayInfoImage(false);
+   }
+   if(plaindepth)
+   {
+      kreader.setDisplaySkeletonDepth(false);
+      kreader.setDisplayInfoDepth(false);
+   }
 
    // Not yet received data
    firstData=true;
@@ -63,6 +76,7 @@ MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigne
 #ifdef WRITEVIDEO
    sbFileVideo = new QLabel(statusBar());
    sbFileVideoSize = new QLabel(statusBar());
+   sbVideoWorkload = new QLabel(statusBar());
 #endif
 
    ui->statusBar->addWidget(sbKinectStatus);
@@ -74,6 +88,7 @@ MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigne
 #ifdef WRITEVIDEO
    ui->statusBar->addWidget(sbFileVideo);
    ui->statusBar->addWidget(sbFileVideoSize);
+   ui->statusBar->addWidget(sbVideoWorkload);
 #endif
    ui->statusBar->addWidget(sbServer);
    ui->statusBar->addWidget(sbClients);
@@ -86,26 +101,17 @@ MainWindow::MainWindow(QString progname,QString fname,QString fnamevideo,unsigne
    menuBar()->addAction("&Help",this,SLOT(help()));
 
 
-
-
    // Fire the rest of the initialization once the window is displayed
    QTimer::singleShot(0, this, SLOT(init()));
 }
 
 
 /**
-   \brief Destructor: terminates the readers and writers
+   \brief Destructor: terminates the readers and writers.
+   NOTE: changed: the readers/writers are terminated in the closeevent now
 **/
 MainWindow::~MainWindow()
 {
-   ui->labelDepth->removeEventFilter(&ke);
-   ui->labelDepth->releaseKeyboard();
-
-   kreader.stop();
-   writer.stop();
-#ifdef WRITEVIDEO
-   writervideo.stop();
-#endif
    delete ui;
 }
 
@@ -114,6 +120,14 @@ MainWindow::~MainWindow()
 **/
 void MainWindow::init()
 {
+   /*printf("thread prior: %p\n",thread());
+
+
+   moveToThread(&mainthread);
+   mainthread.start();
+
+   printf("thread after: %p\n",thread());*/
+
    // Image holder sizes
    ui->labelDepth->setMinimumSize(400,300);
    ui->labelImage->setMinimumSize(400,300);
@@ -208,30 +222,33 @@ void MainWindow::kinectData()
    }
 
    // Get the images, resize, and display
-   QImage img,target;
+   QImage img,depth,target;
+   QKinect::Bodies bodies;
+   double ts;
+   unsigned fid;
 
-   img = kreader.getDepth();
+   kreader.getCameraDepthBodies(img,depth,bodies,ts,fid);
+
+
    target = QImage(ui->labelDepth->size(),QImage::Format_RGB32);
    QPainter painter;
    painter.begin(&target);
-   painter.drawImage(QRect(QPoint(0,0),ui->labelDepth->size()),img,QRect(QPoint(0,0),img.size()));
+   painter.drawImage(QRect(QPoint(0,0),ui->labelDepth->size()),depth,QRect(QPoint(0,0),img.size()));
    painter.end();
    ui->labelDepth->setPixmap(QPixmap::fromImage(target));
 
-   img = kreader.getCamera();
    target = QImage(ui->labelImage->size(),QImage::Format_RGB32);
    painter.begin(&target);
    painter.drawImage(QRect(QPoint(0,0),ui->labelImage->size()),img,QRect(QPoint(0,0),img.size()));
    painter.end();
    ui->labelImage->setPixmap(QPixmap::fromImage(target));
 
-   QKinect::Bodies bodies = kreader.getBodies();
    sbKinectNumBody->setText(QString("Body: %1").arg(bodies.size()));
 
    xnFPSMarkFrame(&xnFPS);
 
-   sbKinectFrame->setText(QString("F#: %1").arg(kreader.getFrameID()));
-   sbKinectTime->setText(QString().sprintf("TS: %.2f",kreader.getTimestamp()));
+   sbKinectFrame->setText(QString("F#: %1").arg(fid));
+   sbKinectTime->setText(QString().sprintf("TS: %.2f",ts));
    sbSystime->setText(QString().sprintf("Systime: %.2f",PreciseTimer::QueryTimer()));
    sbRuntime->setText(QString().sprintf("Runtime: %.2f",PreciseTimer::QueryTimer()-timeFirstData));
    sbKinectFPS->setText(QString().sprintf("FPS: %.2f",xnFPSCalc(&xnFPS)));
@@ -243,7 +260,10 @@ void MainWindow::kinectData()
 
 #ifdef WRITEVIDEO
    if(!fnamevideo.isNull())
-      sbFileVideoSize->setText(QString("VS: %1 MB").arg(writervideo.getVideoSize()/1024/1024));
+   {
+      sbFileVideoSize->setText(QString("VS: %1 MB").arg(writervideo.getEncodedSize()/1024/1024));
+      sbVideoWorkload->setText(QString().sprintf("Enc: %05d Backlog: %05d",writervideo.getEncodedFramesCount(),writervideo.getUnencodedFramesCount()));
+   }
 #endif
 
 
@@ -316,5 +336,28 @@ void MainWindow::about()
    ui->labelDepth->grabKeyboard();
 }
 
+/**
+   \brief Terminates the readers and writers
+**/
+void MainWindow::stop()
+{
+   ui->labelDepth->removeEventFilter(&ke);
+   ui->labelDepth->releaseKeyboard();
+
+#ifdef WRITEVIDEO
+   writervideo.stop();
+#endif
+
+   writer.stop();
+
+   kreader.stop();
 
 
+
+
+}
+
+void MainWindow::closeEvent( QCloseEvent * event)
+{
+   stop();
+}

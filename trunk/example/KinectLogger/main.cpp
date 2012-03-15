@@ -37,11 +37,13 @@ void Syntax(QString progname,QString errmsg)
 "\n\n"
 "Usage:\n\n"
 #ifdef WRITEVIDEO
-"      %2  [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [-v &lt;video&gt;] [-b &lt;bitrate&gt;] [&lt;file&gt;]\n\n"
+"      %2  [-?|-h]  [-pi]  [-pd]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [-v &lt;video&gt;] [-b &lt;bitrate&gt;] [&lt;file&gt;]\n\n"
 #else
-"      %2  [-?|-h]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [&lt;file&gt;]\n\n"
+"      %2  [-?|-h]  [-pi]  [-pd]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [&lt;file&gt;]\n\n"
 #endif
 "   ?|h        display this help\n"
+"   pi         plain image: do not overlay the skeleton on the image\n"
+"   pd         plain depth map: do not overlay the skeleton on the depth map\n"
 "   &lt;numuser&gt;  maximum number of users to store/serve (\"NaN\" are used for padding when less users than &lt;numuser&gt; are seen)\n"
 "   &lt;port&gt;     starts a streaming server on &lt;port&gt;\n"
 "   &lt;file&gt;     store data in &lt;file&gt;\n"
@@ -59,7 +61,7 @@ void Syntax(QString progname,QString errmsg)
 int main(int argc, char *argv[])
 {
    unsigned numtrack,bitrate;
-   unsigned help1,help2;
+   unsigned help1,help2,plainimage,plaindepth;
    char s_num[256],s_file[256],s_port[256],s_filevid[256],s_bitrate[256];
    int num,port;
 
@@ -73,11 +75,10 @@ int main(int argc, char *argv[])
 
    // Scan command line
 #ifdef WRITEVIDEO
-   int rv = ScanCommandLine("-n@ -s@ @ -h -? -v@ -b@",argc,argv,s_num,s_port,s_file,&help1,&help2,s_filevid,s_bitrate);
+   int rv = ScanCommandLine("-n@ -s@ @ -h -? -pi -pd -v@ -b@",argc,argv,s_num,s_port,s_file,&help1,&help2,&plainimage,&plaindepth,s_filevid,s_bitrate);
 #else
-   int rv = ScanCommandLine("-n@ -s@ @ -h -?",argc,argv,s_num,s_port,s_file,&help1,&help2);
+   int rv = ScanCommandLine("-n@ -s@ @ -h -? -pi -pd",argc,argv,s_num,s_port,s_file,&help1,&help2,&plainimage,&plaindepth);
 #endif
-
 
    // Check for error or help request
    if(rv || help1 || help2)
@@ -129,7 +130,7 @@ int main(int argc, char *argv[])
       num=1;
 
 
-   MainWindow w(progname,QString(s_file),QString(s_filevid),bitrate,num,port);
+   MainWindow w(progname,plainimage,plaindepth,QString(s_file),QString(s_filevid),bitrate,num,port);
    w.show();
    rv = a.exec();
 

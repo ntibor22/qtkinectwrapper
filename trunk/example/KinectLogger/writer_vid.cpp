@@ -16,6 +16,7 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 // Only do the stuff if requested to
 #ifdef WRITEVIDEO
 
+#include <QTimer>
 #include "writer_vid.h"
 #include "precisetimer.h"
 
@@ -47,10 +48,25 @@ KWriterVideo::~KWriterVideo()
 
 void KWriterVideo::stop()
 {
+   // Try to execute that in a thread
+
+   // Disconnect the kinect data notification to this object
+   bool ok = kinect->disconnect();
+
+
+   stopt();
+
+
+}
+void KWriterVideo::stopt()
+{
+   // First we must terminate the thread and only after close the encoders
    thread.exit();
    thread.wait();
-   encoder.close();
+
+   encoderth.close();
 }
+
 /**
   \brief Start accepting kinect data and serving / storing them
 
@@ -67,7 +83,7 @@ int KWriterVideo::start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *
    unsigned fps = 30;         // Frame per second. Kinect is at 30.
 
    // Create the encoder
-   if(!encoder.createFile(fname,frame.width(),frame.height(),bitrate,gop,fps))
+   if(!encoderth.createFile(fname,frame.width(),frame.height(),bitrate,gop,fps))
    {
       return 1;
    }
@@ -87,11 +103,6 @@ int KWriterVideo::start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *
 }
 
 
-int KWriterVideo::getVideoSize()
-{
-   return encodesize;
-}
-
 
 /**
   Format of the data in the file:
@@ -103,32 +114,33 @@ int KWriterVideo::getVideoSize()
 **/
 void KWriterVideo::dataNotification()
 {
-   //double t1,t2,t3;
-   //t1 = PreciseTimer::QueryTimer();
+   double t1,t2,t3,t4;
+   t1 = PreciseTimer::QueryTimer();
 
 
    // The image on which we draw the frames
-   QImage cam = kinect->getCamera();
-   QImage depth = kinect->getDepth();
+   QImage cam,depth;
+   double ts;
+   unsigned fid;
 
+   kinect->getCameraDepth(cam,depth,ts,fid);
 
    painter.drawImage(0,0,depth);
    painter.drawImage(640,0,cam);
 
    // Write additional infos
    QString info;
-   info.sprintf("%06.3f %06.3f %06u",PreciseTimer::QueryTimer(),kinect->getTimestamp(),kinect->getFrameID());
+   info.sprintf("%06.3f %06.3f %06u",PreciseTimer::QueryTimer(),ts,fid);
 
    painter.drawText(0,fontheight,info);
 
 
-   //t2 = PreciseTimer::QueryTimer();
-   int size=encoder.encodeImage(frame);
-   //t3 = PreciseTimer::QueryTimer();
+   t2 = PreciseTimer::QueryTimer();
+   encoderth.encodeImage(frame,ts);
+   t3 = PreciseTimer::QueryTimer();
 
-   encodesize+=size;
 
-   //printf("Encoded: %d. Setup: %.5f. Encode: %.5f\n",size,t2-t1,t3-t2);
+   //printf("%05d %.4f. Setup: %.4f. EncInThrd: %.4f. Tot%.4f.\n",fid,ts,t2-t1,t3-t2,t3-t1);
 
 
 
@@ -136,6 +148,25 @@ void KWriterVideo::dataNotification()
 }
 
 
+unsigned KWriterVideo::getEncodedFramesCount()
+{
+   return encoderth.getEncodedFramesCount();
+}
 
+unsigned KWriterVideo::getEncodedSize()
+{
+   return encoderth.getEncodedSize();
+}
+unsigned KWriterVideo::getUnencodedFramesCount()
+{
+   return encoderth.getUnencodedFramesCount();
+}
+
+/*void KWriterVideo::setdel(int value)
+{
+   encoderth.setdel(value);
+}*/
 
 #endif
+
+
