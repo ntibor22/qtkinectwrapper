@@ -207,6 +207,32 @@ Bodies QKinectWrapper::getBodies()
 }
 
 /**
+   \brief Return the latest camera and depth images and bodies, together with their timestamp.
+   Call this afer a dataNotification signal
+**/
+void QKinectWrapper::getCameraDepthBodies(QImage &camera,QImage &depth,Bodies &bodies, double &ts, unsigned &fid)
+{
+   QMutexLocker locker(&mutex);
+   camera = imageCamera;
+   depth = imageDepth;
+   bodies = QKinectWrapper::bodies;
+   ts = timestamp;
+   fid = frameid;
+}
+/**
+   \brief Return the latest camera and depth images, together with their timestamp.
+   Call this afer a dataNotification signal
+**/
+void QKinectWrapper::getCameraDepth(QImage &camera,QImage &depth, double &ts, unsigned &fid)
+{
+   QMutexLocker locker(&mutex);
+   camera = imageCamera;
+   depth = imageDepth;
+   ts = timestamp;
+   fid = frameid;
+}
+
+/**
    \brief Return the last error message.
    This should only be called if statusNotification is called and indicates an error
 **/

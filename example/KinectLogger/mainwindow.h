@@ -39,7 +39,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-   explicit MainWindow(QString progname,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
+   explicit MainWindow(QString progname,bool plainimage,bool plaindepth,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
    ~MainWindow();
 
 public slots:
@@ -52,11 +52,15 @@ public slots:
 
 
 protected:
+   virtual void closeEvent( QCloseEvent * event);
+   void stop();
 
 private slots:
    void key(int k);
    void help();
    void about();
+
+
 
 private:
    Ui::MainWindow *ui;
@@ -84,6 +88,7 @@ private:
 #ifdef WRITEVIDEO
    QLabel *sbFileVideo;
    QLabel *sbFileVideoSize;
+   QLabel *sbVideoWorkload;
    KWriterVideo writervideo;
    unsigned bitrate;
    QString fnamevideo;

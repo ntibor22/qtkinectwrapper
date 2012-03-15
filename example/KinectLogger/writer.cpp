@@ -32,8 +32,13 @@ KWriter::~KWriter()
 
 void KWriter::stop()
 {
+   // Disconnect the kinect data notification to this object
+   bool ok = kinect->disconnect();
+
+   // First we must terminate the thread and only after close the file
    thread.exit();
    thread.wait();
+
    file.close();
 }
 /**

@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     writer.cpp \
     precisetimer.cpp \
     keyfilter.cpp \
-    helpdialog.cpp
+    helpdialog.cpp \
+    cio.cpp \
+    videoencoderthreaded.cpp
 
 
 
@@ -33,7 +35,9 @@ HEADERS  += mainwindow.h \
     writer.h \
     precisetimer.h \
     keyfilter.h \
-    helpdialog.h
+    helpdialog.h \
+    cio.h \
+    videoencoderthreaded.h
 
 
 FORMS    += mainwindow.ui \
