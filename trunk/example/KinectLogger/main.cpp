@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -37,7 +37,8 @@ void Syntax(QString progname,QString errmsg)
 "\n\n"
 "Usage:\n\n"
 #ifdef WRITEVIDEO
-"      %2  [-?|-h]  [-pi]  [-pd]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [-v &lt;video&gt;] [-b &lt;bitrate&gt;] [&lt;file&gt;]\n\n"
+"      %2  [-?|-h]  [-pi]  [-pd]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [-vfr] [-vmaxbuf &lt;maxbuf&gt;]\n"
+"      [-v &lt;video&gt;] [-b &lt;bitrate&gt;] [&lt;file&gt;]\n\n"
 #else
 "      %2  [-?|-h]  [-pi]  [-pd]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]  [&lt;file&gt;]\n\n"
 #endif
@@ -48,11 +49,14 @@ void Syntax(QString progname,QString errmsg)
 "   &lt;port&gt;     starts a streaming server on &lt;port&gt;\n"
 "   &lt;file&gt;     store data in &lt;file&gt;\n"
 #ifdef WRITEVIDEO
+"   vfr        variable frame rate video encoding\n"
+"   maxbuf     maximum frames in the video encoding buffer\n"
 "   &lt;video&gt;    store video in &lt;video&gt;\n"
 "   &lt;bitrate&gt;  video &lt;bitrate&gt; ranging from %3 to %4 (default %5)\n"
 #endif
 "\n"
-"If neither a port nor a file is specified, the program displays the Kinect data without logging.</pre></html>\n").arg(errmsg).arg(progname).arg(BITRATEMIN).arg(BITRATEMAX).arg(BITRATEDEFAULT);
+"If neither a port nor a file is specified, the program displays the Kinect data without logging.\n"
+"It is advisable to use -vfr to ensure that the video frames are properly timestamped even when frames are dropped.</pre></html>\n").arg(errmsg).arg(progname).arg(BITRATEMIN).arg(BITRATEMAX).arg(BITRATEDEFAULT);
 
    QMessageBox::information(0,progname,str);
 
@@ -62,8 +66,9 @@ int main(int argc, char *argv[])
 {
    unsigned numtrack,bitrate;
    unsigned help1,help2,plainimage,plaindepth;
-   char s_num[256],s_file[256],s_port[256],s_filevid[256],s_bitrate[256];
+   char s_num[256],s_file[256],s_port[256],s_filevid[256],s_bitrate[256],s_vmaxbuf[256];
    int num,port;
+   int vfr,vmaxbuf;
 
 
    QFileInfo info(argv[0]);
@@ -75,7 +80,7 @@ int main(int argc, char *argv[])
 
    // Scan command line
 #ifdef WRITEVIDEO
-   int rv = ScanCommandLine("-n@ -s@ @ -h -? -pi -pd -v@ -b@",argc,argv,s_num,s_port,s_file,&help1,&help2,&plainimage,&plaindepth,s_filevid,s_bitrate);
+   int rv = ScanCommandLine("-n@ -s@ @ -h -? -pi -pd -vfr -vmaxbuf@ -v@ -b@",argc,argv,s_num,s_port,s_file,&help1,&help2,&plainimage,&plaindepth,&vfr,s_vmaxbuf,s_filevid,s_bitrate);
 #else
    int rv = ScanCommandLine("-n@ -s@ @ -h -? -pi -pd",argc,argv,s_num,s_port,s_file,&help1,&help2,&plainimage,&plaindepth);
 #endif
@@ -127,10 +132,23 @@ int main(int argc, char *argv[])
       }
    }
    else
-      num=1;
+      bitrate=4000000;
 
+   // Check optional maxbuf
+   if(strlen(s_vmaxbuf))
+   {
+      // Convert
+      rv = sscanf(s_vmaxbuf,"%u",&vmaxbuf);
+      if(rv!=1)
+      {
+         Syntax(progname,"Invalid maximum video encoding buffer size");
+         return 0;
+      }
+   }
+   else
+      vmaxbuf=-1;     // unlimited
 
-   MainWindow w(progname,plainimage,plaindepth,QString(s_file),QString(s_filevid),bitrate,num,port);
+   MainWindow w(progname,plainimage,plaindepth,QString(s_file),QString(s_filevid),bitrate,num,port,vfr,vmaxbuf);
    w.show();
    rv = a.exec();
 

@@ -1,6 +1,6 @@
 /*
    QtKinectWrapper - Qt Kinect Wrapper Class
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -17,6 +17,7 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #include "QKinectWrapper.h"
 #include <math.h>
 //#include <cmath>
+//#include "precisetimer.h"
 
 namespace QKinect
 {
@@ -321,8 +322,11 @@ void QKinectWrapper::run()
       //double t1,t2;
       //t1 = PreciseTimer::QueryTimer();
       XnStatus status = g_Context.WaitAndUpdateAll();
+      //msleep(100+(rand()%100));   // simulate some shit delay
+      //if( (frameid%100) > 50)
+        // msleep(((frameid%100)-50)*10);           // simulate some slowing down delay delay
       //t2 = PreciseTimer::QueryTimer();
-      //printf("%lf. %s\n",(t2-t1)*1000.0,xnGetStatusString(status));
+      //printf("Waitandupdate: %lf. %s\n",(t2-t1)*1000.0,xnGetStatusString(status));
 
       // Prepare the data to export outside of the thread
       mutex.lock();
@@ -330,6 +334,7 @@ void QKinectWrapper::run()
       g_DepthGenerator.GetMetaData(depthMD);
       //frameid = depthMD.FrameID();
       frameid++;
+      //printf("frame id: %d %d\n",frameid,depthMD.FrameID());
       timestamp = (double)depthMD.Timestamp()/1000000.0;
       // Must create the bodies first
       bodies = createBodies();

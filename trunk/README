@@ -1,5 +1,5 @@
 	QtKinectwrapper - Qt Kinect Wrapper Class 
-	Copyright (C) 2011:
+	Copyright (C) 2011-2012:
 			Daniel Roggen, droggen@gmail.com			
 			
 	All rights reserved.
@@ -9,13 +9,17 @@
 History
 -------
 
+17.03.2012:
+	KinectLogger:
+		Added support for variable frame rate videos (-vfr option) and setting a limit to the video encoding buffer (-vmaxbuf option)
+
 15.03.2012:
-  KinectLogger:
-    Added threaded video encoding with backlog - addresses problem when the computer can't keep up with video encoding, at the expense of using more RAM
-    Check the "backlog" indication in the app status bar to see how many frames haven't yet been encoded. 
-    When the user closes the app, it will encoded the backlog of frames. Thus the app may take some time before closing to complete the encoding.
+	KinectLogger:
+		Added threaded video encoding with backlog - addresses problem when the computer can't keep up with video encoding, at the expense of using more RAM
+		Check the "backlog" indication in the app status bar to see how many frames haven't yet been encoded. 
+		When the user closes the app, it will encoded the backlog of frames. Thus the app may take some time before closing to complete the encoding.
     
-    Added new APIs to the QtKinectWrapper: getCameraDepthBodies, getCameraDepth.
+		Added new APIs to the QtKinectWrapper: getCameraDepthBodies, getCameraDepth.
 
 21.09.2011:
   KinectLogger:

@@ -1,6 +1,6 @@
 /*
    QtKinectWrapper - Qt Kinect Wrapper Class
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
