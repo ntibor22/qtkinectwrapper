@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -33,7 +33,7 @@ KWriter::~KWriter()
 void KWriter::stop()
 {
    // Disconnect the kinect data notification to this object
-   bool ok = kinect->disconnect();
+   disconnect(kinect);
 
    // First we must terminate the thread and only after close the file
    thread.exit();

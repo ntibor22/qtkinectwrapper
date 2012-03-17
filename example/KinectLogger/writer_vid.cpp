@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -43,20 +43,13 @@ KWriterVideo::KWriterVideo() :
 KWriterVideo::~KWriterVideo()
 {
    stop();
-
 }
 
 void KWriterVideo::stop()
 {
-   // Try to execute that in a thread
-
    // Disconnect the kinect data notification to this object
-   bool ok = kinect->disconnect();
-
-
+   disconnect(kinect);
    stopt();
-
-
 }
 void KWriterVideo::stopt()
 {
@@ -74,7 +67,7 @@ void KWriterVideo::stopt()
    0:    OK
    1:    File creation error
 **/
-int KWriterVideo::start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *k)
+int KWriterVideo::start(QString fname,unsigned bitrate,bool vfr, int vmaxbuf, QKinect::QKinectWrapper *k)
 {
    KWriterVideo::fname=fname;
    kinect=k;
@@ -83,12 +76,10 @@ int KWriterVideo::start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *
    unsigned fps = 30;         // Frame per second. Kinect is at 30.
 
    // Create the encoder
-   if(!encoderth.createFile(fname,frame.width(),frame.height(),bitrate,gop,fps))
+   if(!encoderth.createFile(fname,frame.width(),frame.height(),bitrate,gop,fps,vfr,vmaxbuf))
    {
       return 1;
    }
-
-
 
 
    // Connect the kinect data notification to this object

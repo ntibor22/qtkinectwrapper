@@ -3,11 +3,14 @@
 <h4>Command line parameters</h4>
 <pre>
    parameters: [-?|-h]  [-pi]  [-pd]  [-n &lt;numuser&gt;]  [-s &lt;port&gt;]
+               [-vfr] [-vmaxbuf &lt;maxbuf&gt;]
                [-b &lt;bitrate&gt;] [-v &lt;video&gt;] [&lt;file&gt;]</pre>
 <ul>
-<li> ?|h: display this help
-<li> pi:  plain image: do not overlay the skeleton on the image
-<li> pd:  plain depth map: do not overlay the skeleton on the depth map
+<li> ?|h:    display this help
+<li> pi:     plain image: do not overlay the skeleton on the image
+<li> pd:     plain depth map: do not overlay the skeleton on the depth map
+<li> vfr:    variable frame rate video encoding. Guarantees that the frame presentation time matches the frame acquisition time. Useful if the computer drops Kinect frames.
+<li> maxbuf: maximum frames in the video encoding buffer. By default the buffering is unlimited, but this may lead to out of memory if the computer is too slow (see backlog in the status bar). If the backlog keeps increasing this option may be specified. In that case -vfr is recommended too. Use 0 to disable buffering.
 <li> &lt;numuser&gt;: maximum number of users to store/serve. "NaN" are used for padding if less users are effectively available.
 <li> &lt;port&gt;     starts a streaming server on &lt;port&gt;
 <li> &lt;bitrate&gt;  video &lt;bitrate&gt;
@@ -15,7 +18,9 @@
 <li> &lt;file&gt;     store data in &lt;file&gt;
 </ul>
 
-If neither a port nor a file is specified, the program displays the Kinect data without logging.
+<p>If neither a port nor a file is specified, the program displays the Kinect data without logging.</p>
+
+<p>It is advisable to use -vfr to ensure that the video frames are properly timestamped even when frames are dropped. However, make sure that your toolchain supports the resulting video format.</p>
 
 <h4>Streaming format</h4>
 

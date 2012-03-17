@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -28,16 +28,19 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 /**
    \brief Mainwindow UI initialization. Reader/writer initialization in init slot.
 **/
-MainWindow::MainWindow(QString progname,bool plainimage,bool plaindepth,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent,Qt::WindowFlags f) :
+MainWindow::MainWindow(QString progname,bool plainimage,bool plaindepth,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,bool vfr,int vmaxbuf,QWidget *parent,Qt::WindowFlags f) :
    QMainWindow(parent,f),
    ui(new Ui::MainWindow)
 {
    //ConsoleInit();
+
    // Keep the params
    MainWindow::progname=progname;
    MainWindow::fname=fname;
    MainWindow::numuser=numuser;
    MainWindow::port=port;
+   MainWindow::vfr=vfr;
+   MainWindow::vmaxbuf=vmaxbuf;
 #ifdef WRITEVIDEO
    MainWindow::fnamevideo=fnamevideo;
    MainWindow::bitrate=bitrate;
@@ -120,14 +123,6 @@ MainWindow::~MainWindow()
 **/
 void MainWindow::init()
 {
-   /*printf("thread prior: %p\n",thread());
-
-
-   moveToThread(&mainthread);
-   mainthread.start();
-
-   printf("thread after: %p\n",thread());*/
-
    // Image holder sizes
    ui->labelDepth->setMinimumSize(400,300);
    ui->labelImage->setMinimumSize(400,300);
@@ -168,7 +163,7 @@ void MainWindow::init()
 #ifdef WRITEVIDEO
    if(!fnamevideo.isEmpty())
    {
-      rv = writervideo.start(fnamevideo,bitrate,&kreader);
+      rv = writervideo.start(fnamevideo,bitrate,vfr,vmaxbuf,&kreader);
       if(rv!=0)
       {
          QString err;
@@ -259,7 +254,7 @@ void MainWindow::kinectData()
       sbClients->setText(QString("Clients: %1").arg(writer.getNumClients()));
 
 #ifdef WRITEVIDEO
-   if(!fnamevideo.isNull())
+   if(!fnamevideo.isEmpty())
    {
       sbFileVideoSize->setText(QString("VS: %1 MB").arg(writervideo.getEncodedSize()/1024/1024));
       sbVideoWorkload->setText(QString().sprintf("Enc: %05d Backlog: %05d",writervideo.getEncodedFramesCount(),writervideo.getUnencodedFramesCount()));
@@ -331,8 +326,8 @@ void MainWindow::about()
    ui->labelDepth->releaseKeyboard();
    QMessageBox::about(this, "About",
    "<p><b>KinectLogger</b></p>\n"
-   "<p>Version 21.09.2011</p>"
-   "<p>(c) 2011 Daniel Roggen</p>");
+   "<p>Version 17.03.2012</p>"
+   "<p>(c) 2011-2012 Daniel Roggen</p>");
    ui->labelDepth->grabKeyboard();
 }
 

@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -39,7 +39,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-   explicit MainWindow(QString progname,bool plainimage,bool plaindepth,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,QWidget *parent = 0, Qt::WindowFlags f = 0);
+   explicit MainWindow(QString progname,bool plainimage,bool plaindepth,QString fname,QString fnamevideo,unsigned bitrate,unsigned numuser,quint16 port,bool vfr,int vmaxbuf,QWidget *parent = 0, Qt::WindowFlags f = 0);
    ~MainWindow();
 
 public slots:
@@ -81,6 +81,8 @@ private:
    QString progname,fname;
    unsigned numuser;
    quint16 port;
+   bool vfr;
+   int vmaxbuf;
    double timeFirstData;
    bool firstData;
    KeyPressEater ke;

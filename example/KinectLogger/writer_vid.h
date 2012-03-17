@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2011:
+   Copyright (C) 2011-2012:
          Daniel Roggen, droggen@gmail.com
 
    All rights reserved.
@@ -31,7 +31,7 @@ public:
    KWriterVideo();
    virtual ~KWriterVideo();
 
-   int start(QString fname,unsigned bitrate,QKinect::QKinectWrapper *k);
+   int start(QString fname,unsigned bitrate,bool vfr,int vmaxbuf,QKinect::QKinectWrapper *k);
    void stop();
 
    unsigned getEncodedFramesCount();
