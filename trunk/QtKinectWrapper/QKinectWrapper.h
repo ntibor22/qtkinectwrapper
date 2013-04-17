@@ -50,7 +50,10 @@ THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDERS ``AS IS'' AND ANY EXPRESS OR IMPL
 #include <QThread>
 #include <QMutex>
 #include <XnOpenNI.h>
+
+#ifndef Q_MOC_RUN       // Fixes a MOC issue with Qt5 (Qt4.x ok) that fails to properly expand some macros. We skip the include in the MOC pass.
 #include <XnCppWrapper.h>
+#endif // Q_MOC_RUN
 
 namespace QKinect
 {
