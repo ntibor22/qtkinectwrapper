@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-*  OpenNI 1.1 Alpha                                                         *
+*  OpenNI 1.x Alpha                                                         *
 *  Copyright (C) 2011 PrimeSense Ltd.                                       *
 *                                                                           *
 *  This file is part of OpenNI.                                             *
@@ -112,6 +112,8 @@ public:
 	}
 
 private:
+	XN_DISABLE_COPY_AND_ASSIGN(XnStack);
+
 	/** The internal XnList with which the stack is implemented. */
 	XnList m_List;
 };

@@ -1,1 +1,2 @@
-OpenNI/Include: OpenNI-1.3.2.1
+OpenNI/Include: contains includes of OpenNI-1.5.4
+
