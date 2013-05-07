@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-*  OpenNI 1.1 Alpha                                                         *
+*  OpenNI 1.x Alpha                                                         *
 *  Copyright (C) 2011 PrimeSense Ltd.                                       *
 *                                                                           *
 *  This file is part of OpenNI.                                             *
@@ -62,7 +62,7 @@
 	#endif
 
 	#include "Win32/XnPlatformWin32.h"
-#elif defined(android) && defined(__arm__)
+#elif defined(ANDROID) && defined(__arm__)
 	#include "Android-Arm/XnPlatformAndroid-Arm.h"
 #elif (linux && (i386 || __x86_64__))
 	#include "Linux-x86/XnPlatformLinux-x86.h"
@@ -94,6 +94,9 @@
 typedef void (*XnFuncPtr)();
 
 #define XN_COMPILER_ASSERT(x) typedef int compileAssert[x ? 1 : -1]
+
+struct XnRegistrationHandleImpl;
+typedef struct XnRegistrationHandleImpl* XnRegistrationHandle;
 
 //---------------------------------------------------------------------------
 // API Export/Import Macros

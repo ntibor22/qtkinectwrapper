@@ -1,6 +1,6 @@
 /****************************************************************************
 *                                                                           *
-*  OpenNI 1.1 Alpha                                                         *
+*  OpenNI 1.x Alpha                                                         *
 *  Copyright (C) 2011 PrimeSense Ltd.                                       *
 *                                                                           *
 *  This file is part of OpenNI.                                             *
@@ -124,6 +124,8 @@ public:
 	}
 
 private:
+	XN_DISABLE_COPY_AND_ASSIGN(XnQueue);
+
 	/** The internal XnList with which the queue is implemented. */
 	XnList m_List;
 };
@@ -137,6 +139,7 @@ private:
 	class decl ClassName : public base													\
 	{																					\
 	public:																				\
+		ClassName() {}																	\
 		~ClassName()																	\
 		{																				\
 			/* We do this using Pop() to make sure memory is freed. */					\
@@ -161,10 +164,13 @@ private:
 			XnStatus nRetVal = base::Pop(val);											\
 			if (nRetVal != XN_STATUS_OK) return (nRetVal);								\
 			value = Translator::GetFromValue(val);										\
+			Translator::FreeValue(val);													\
 			return XN_STATUS_OK;														\
 		}																				\
 		inline Type const& Top() const { return Translator::GetFromValue(base::Top()); }\
 		inline Type& Top() { return Translator::GetFromValue(base::Top()); }			\
+	private:																			\
+		XN_DISABLE_COPY_AND_ASSIGN(ClassName);											\
 	};
 
 /**

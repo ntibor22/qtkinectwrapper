@@ -1,5 +1,5 @@
 	QtKinectwrapper - Qt Kinect Wrapper Class 
-	Copyright (C) 2011-2012:
+	Copyright (C) 2011-2013:
 			Daniel Roggen, droggen@gmail.com			
 			
 	All rights reserved.
@@ -8,6 +8,13 @@
 
 History
 -------
+
+07.05.2013:
+	QtKinectWrapper:
+		Updated to use OpenNI and NiTE 1.5. 
+		Version 1.5 removes the need for calibration pose.
+			For windows, use: NITE-Win32-1.5.2.21-Dev.msi, OpenNI-Win32-1.5.4.0-Dev.msi, SensorKinect093-Bin-Win32-v5.1.2.1.msi (PrimeSense Sensor KinectMod 5.1.2.1)
+		
 
 17.03.2012:
 	KinectLogger:

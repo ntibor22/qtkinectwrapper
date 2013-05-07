@@ -6,16 +6,19 @@
 
 QT       += core gui
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 TARGET = KinectReader
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    cio.cpp
+		  mainwindow.cpp \
+	 cio.cpp
 
 HEADERS  += mainwindow.h \
-    cio.h
+	 cio.h \
+    precisetimer.h
 
 FORMS    += mainwindow.ui
 
@@ -62,15 +65,15 @@ HEADERS += $$QTKINECTWRAPPER_SOURCE_PATH/QKinectWrapper.h
 
 
 win32 {
-   # Set the path to the patched openni/include
-   INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH/OpenNI/Include
-   # Set the path to the Qt wrapper
-   INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH
+	# Set the path to the patched openni/include
+	INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH/OpenNI/Include
+	# Set the path to the Qt wrapper
+	INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH
 
-   # Iterate through
-   for(l, OPENNI_LIBRARY_PATH):LIBS+=-L$$l/lib
-   #LIBS += -L$$OPENNI_LIBRARY_PATH/lib
-   LIBS += -lopenNI
+	# Iterate through
+	for(l, OPENNI_LIBRARY_PATH):LIBS+=-L$$l/lib
+	#LIBS += -L$$OPENNI_LIBRARY_PATH/lib
+	LIBS += -lopenNI
 }
 
 # ##############################################################################
@@ -80,4 +83,4 @@ win32 {
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 RESOURCES += \
-    resources.qrc
+	 resources.qrc
