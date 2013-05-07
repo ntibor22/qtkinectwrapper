@@ -7,7 +7,7 @@
 # Set this to include the video generation capability. Requires QtFFmpegWrapper
 DEFINES += WRITEVIDEO
 
-QT       += core gui network
+QT       += core gui network widgets
 
 #CONFIG += console
 
@@ -17,47 +17,47 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    cmdline/cmdline.cpp \
-    QStreamSrv.cpp \
-    writer.cpp \
-    precisetimer.cpp \
-    keyfilter.cpp \
-    helpdialog.cpp \
-    cio.cpp \
-    videoencoderthreaded.cpp
+		  mainwindow.cpp \
+	 cmdline/cmdline.cpp \
+	 QStreamSrv.cpp \
+	 writer.cpp \
+	 precisetimer.cpp \
+	 keyfilter.cpp \
+	 helpdialog.cpp \
+	 cio.cpp \
+	 videoencoderthreaded.cpp
 
 
 
 HEADERS  += mainwindow.h \
-    cmdline/cmdline.h \
-    QStreamSrv.h \
-    writer.h \
-    precisetimer.h \
-    keyfilter.h \
-    helpdialog.h \
-    cio.h \
-    videoencoderthreaded.h
+	 cmdline/cmdline.h \
+	 QStreamSrv.h \
+	 writer.h \
+	 precisetimer.h \
+	 keyfilter.h \
+	 helpdialog.h \
+	 cio.h \
+	 videoencoderthreaded.h
 
 
 FORMS    += mainwindow.ui \
-    helpdialog.ui
+	 helpdialog.ui
 
 RESOURCES += \
-    resources.qrc
+	 resources.qrc
 
 OTHER_FILES += \
-    help.html \
-    kinectlogger.rc
+	 help.html \
+	 kinectlogger.rc
 
 # icon
 win32: RC_FILE = kinectlogger.rc
 
 #
 contains(DEFINES, WRITEVIDEO)  {
-   message(Adding files for video generation)
-   SOURCES += writer_vid.cpp
-   HEADERS += writer_vid.h
+	message(Adding files for video generation)
+	SOURCES += writer_vid.cpp
+	HEADERS += writer_vid.h
 }
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -102,15 +102,15 @@ HEADERS += $$QTKINECTWRAPPER_SOURCE_PATH/QKinectWrapper.h
 
 
 win32 {
-   # Set the path to the patched openni/include
-   INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH/OpenNI/Include
-   # Set the path to the Qt wrapper
-   INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH
+	# Set the path to the patched openni/include
+	INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH/OpenNI/Include
+	# Set the path to the Qt wrapper
+	INCLUDEPATH += $$QTKINECTWRAPPER_SOURCE_PATH
 
-   # Iterate through
-   for(l, OPENNI_LIBRARY_PATH):LIBS+=-L$$l/lib
-   #LIBS += -L$$OPENNI_LIBRARY_PATH/lib
-   LIBS += -lopenNI
+	# Iterate through
+	for(l, OPENNI_LIBRARY_PATH):LIBS+=-L$$l/lib
+	#LIBS += -L$$OPENNI_LIBRARY_PATH/lib
+	LIBS += -lopenNI
 }
 
 # ##############################################################################
@@ -122,7 +122,7 @@ win32 {
 
 
 contains(DEFINES, WRITEVIDEO)  {
-   message(Adding ffmpeg config)
+	message(Adding ffmpeg config)
 # ##############################################################################
 # ##############################################################################
 # FFMPEG: START OF CONFIGURATION BELOW ->
@@ -155,15 +155,15 @@ FFMPEG_INCLUDE_PATH = ../../../qtffmpegwrapper_trunk/QTFFmpegWrapper
 # ##############################################################################
 # Sources for QT wrapper
 SOURCES += $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoEncoder.cpp \
-    $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.cpp
+	 $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.cpp
 HEADERS += $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoEncoder.h \
-    $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.h
+	 $$QTFFMPEGWRAPPER_SOURCE_PATH/QVideoDecoder.h
 
 # Set list of required FFmpeg libraries
 LIBS += -lavutil \
-    -lavcodec \
-    -lavformat \
-    -lswscale
+	 -lavcodec \
+	 -lavformat \
+	 -lswscale
 
 # Add the path
 LIBS += -L$$FFMPEG_LIBRARY_PATH
